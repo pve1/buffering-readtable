@@ -1,0 +1,20 @@
+* Buffering readtable
+
+Creates a readtable that buffers all input from a non-interactive
+stream passed to READ. The input can be transformed before being
+returned by READ.
+
+Example:
+
+#+BEGIN_SRC lisp
+  (let ((*readtable* (make-buffering-readtable
+                      :translate-all (lambda (forms)
+                                       (append forms (list 'extra))))))
+    (with-input-from-string (s \"a b c\")
+      (list (read s)
+            (read s)
+            (read s)
+            (read s))))
+
+=> (A B C EXTRA)
+#+END_SRC
