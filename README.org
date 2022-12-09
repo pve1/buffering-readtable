@@ -10,7 +10,7 @@ Example:
   (let ((*readtable* (make-buffering-readtable
                       :translate-all (lambda (forms)
                                        (append forms (list 'extra))))))
-    (with-input-from-string (s \"a b c\")
+    (with-input-from-string (s "a b c")
       (list (read s)
             (read s)
             (read s)
