@@ -4,17 +4,51 @@ Creates a readtable that buffers all input from a non-interactive
 stream passed to READ. The input can be transformed before being
 returned by READ.
 
-Example:
+Some examples:
+
+Appending an additional symbol to the forms read from a stream.
 
 #+BEGIN_SRC lisp
-  (let ((*readtable* (make-buffering-readtable
-                      :translate-all (lambda (forms)
-                                       (append forms (list 'extra))))))
-    (with-input-from-string (s "a b c")
-      (list (read s)
-            (read s)
-            (read s)
-            (read s))))
+(let ((*readtable* (buffering-readtable:make-buffering-readtable
+                    :translate-all (lambda (forms)
+                                     (append forms (list 'extra))))))
+  (with-input-from-string (s "a b c")
+    (list (read s)
+          (read s)
+          (read s)
+          (read s))))
 
 => (A B C EXTRA)
+#+END_SRC
+
+Replacing a symbol with another. 
+
+#+BEGIN_SRC lisp
+(let ((*readtable* (buffering-readtable:make-buffering-readtable
+                    :translate-one (lambda (form)
+                                     (if (eql form 'x)
+                                         'c
+                                         form)))))
+
+  (with-input-from-string (s "a b x")
+    (list (read s)
+          (read s)
+          (read s))))
+
+=> (A B C)
+#+END_SRC
+
+Manipulating the input string.
+
+#+BEGIN_SRC lisp
+(let ((*readtable* (buffering-readtable:make-buffering-readtable
+                    :translate-string
+                    (lambda (string)
+                      (cl-ppcre:regex-replace-all "x" string "")))))
+  (with-input-from-string (s "a x b x c")
+    (list (read s)
+          (read s)
+          (read s))))
+
+=> (A B C)
 #+END_SRC
