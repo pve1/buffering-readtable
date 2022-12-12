@@ -38,7 +38,7 @@ Replacing a symbol with another.
 => (A B C)
 #+END_SRC
 
-Manipulating the input string.
+Manipulating the buffered input string.
 
 #+BEGIN_SRC lisp
 (let ((*readtable* (buffering-readtable:make-buffering-readtable
